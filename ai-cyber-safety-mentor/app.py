@@ -42,6 +42,22 @@ def rule_based_score(message):
 
     return score, triggers
 
+def generate_learning_cards(triggers):
+    learning_content = []
+
+    mapping = {
+        "Suspicious Link": "Always verify URLs carefully. Fraud links often use slight spelling changes or shortened URLs.",
+        "Urgency Manipulation": "Scammers create urgency to stop you from thinking rationally. Take your time before acting.",
+        "Authority Impersonation": "Banks and RBI never ask for OTP or passwords over SMS or calls.",
+        "Fear Tactic": "Threats of account suspension or legal action are common fear-based scam tactics.",
+        "Reward Lure": "Unrealistic rewards or lottery winnings are major red flags."
+    }
+
+    for trigger in triggers:
+        if trigger in mapping:
+            learning_content.append(mapping[trigger])
+
+    return learning_content
 
 @app.route('/')
 def home():
@@ -70,12 +86,16 @@ def analyze():
     else:
         label = "Likely Safe"
 
+    learning_cards = generate_learning_cards(triggers)
+
     return jsonify({
         "label": label,
         "confidence": hybrid_score,
         "ml_probability": round(ml_prob, 2),
-        "triggers": triggers
+        "triggers": triggers,
+        "learning_cards": learning_cards
     })
+
 
 
 if __name__ == "__main__":
