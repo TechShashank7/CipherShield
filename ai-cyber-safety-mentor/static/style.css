@@ -105,3 +105,23 @@ button:hover {
     font-size: 14px;
     line-height: 1.6;
 }
+
+.feedback-card {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.feedback-success {
+    background: rgba(0, 255, 0, 0.15);
+    border: 1px solid rgba(0, 255, 0, 0.6);
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+}
+
+.feedback-fail {
+    background: rgba(255, 0, 0, 0.15);
+    border: 1px solid rgba(255, 0, 0, 0.6);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Round Feedback</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Round Feedback</h1>
+
+    <div class="feedback-card {% if success %}feedback-success{% else %}feedback-fail{% endif %}">
+        <p>{{ feedback }}</p>
+        <p><b>Current Cyber Risk Score:</b> {{ score }}</p>
+    </div>
+
+    {% if session.current_round < 7 %}
+        <a href="/next_round"><button>Next Round</button></a>
+    {% else %}
+        <a href="/result"><button>See Final Result</button></a>
+    {% endif %}
+</div>
+
+</body>
+</html>
