@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Cyber Safety Mentor</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>AI Cyber Safety Mentor</h1>
+    <p class="subtitle">Hybrid ML + Behavioral Fraud Detection Engine</p>
+
+    <div class="card">
+        <h2>Scam Detection Engine</h2>
+
+        <textarea id="message" placeholder="Paste suspicious message here..."></textarea>
+
+        <button onclick="analyze()">Analyze Message</button>
+
+        <div id="result" class="result hidden"></div>
+    </div>
+</div>
+
+<script>
+function analyze() {
+    let message = document.getElementById("message").value;
+
+    fetch("/analyze", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "message=" + encodeURIComponent(message)
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        let riskColor = "green";
+        if (data.confidence >= 70) riskColor = "red";
+        else if (data.confidence >= 40) riskColor = "orange";
+
+        document.getElementById("result").classList.remove("hidden");
+        document.getElementById("result").innerHTML = `
+            <div class="risk ${riskColor}">
+                ${data.label}
+            </div>
+            <div class="progress-bar">
+                <div class="progress" style="width:${data.confidence}%"></div>
+            </div>
+            <p><b>Hybrid Confidence:</b> ${data.confidence}%</p>
+            <p><b>ML Probability:</b> ${data.ml_probability}</p>
+            <p><b>Psychological Triggers:</b> ${data.triggers.join(", ") || "None detected"}</p>
+        `;
+    });
+}
+</script>
+
+</body>
+</html>
