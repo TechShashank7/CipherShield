@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Challenge Result</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Cyber Immunity Challenge Complete</h1>
+
+    <div class="result-card">
+        <h2>Your Final Cyber Risk Score: {{ score }}</h2>
+
+        {% if score >= 85 %}
+            <p class="result-text green-text">
+                Outstanding Cyber Awareness! You demonstrate strong resistance against phishing manipulation.
+            </p>
+        {% elif score >= 60 %}
+            <p class="result-text orange-text">
+                Moderate Awareness. You identified some risks but improvement is recommended.
+            </p>
+        {% else %}
+            <p class="result-text red-text">
+                High Vulnerability Detected. Additional cyber safety training is strongly recommended.
+            </p>
+        {% endif %}
+    </div>
+
+    <br>
+    <a href="/challenge"><button>Play Again</button></a>
+
+</div>
+
+</body>
+</html>

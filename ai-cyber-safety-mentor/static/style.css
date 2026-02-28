@@ -125,3 +125,40 @@ button:hover {
     border: 1px solid rgba(255, 0, 0, 0.6);
     box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
 }
+
+.score-box {
+    margin-bottom: 15px;
+    font-size: 16px;
+    background: #eef3ff;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.simulation-box {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #007bff;
+}
+
+.result-card {
+    padding: 25px;
+    border-radius: 12px;
+    background: #f4f6f9;
+}
+
+.green-text {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.orange-text {
+    color: #ff9800;
+    font-weight: bold;
+}
+
+.red-text {
+    color: #dc3545;
+    font-weight: bold;
+}

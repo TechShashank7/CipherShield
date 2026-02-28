@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cyber Immunity Challenge</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Cyber Immunity Challenge</h1>
+    <p>Round {{ round }} of 7</p>
+
+    <div class="score-box">
+        <strong>Current Cyber Risk Score:</strong> {{ risk }}
+    </div>
+
+    <div class="card">
+        <h3>Analyze the Message Carefully</h3>
+
+        <div class="simulation-box">
+            {{ scenario.message }}
+        </div>
+
+        <form method="POST" action="/submit_round">
+
+            <h4>What looks suspicious? (Select all that apply)</h4>
+
+            <label><input type="checkbox" name="flags" value="link"> Suspicious Link</label><br>
+            <label><input type="checkbox" name="flags" value="authority"> Authority Misuse</label><br>
+            <label><input type="checkbox" name="flags" value="urgency"> Urgency Tactic</label><br>
+            <label><input type="checkbox" name="flags" value="reward"> Reward Lure</label><br>
+            <label><input type="checkbox" name="flags" value="grammar"> Grammar Issue</label><br>
+
+            <h4>What would you do?</h4>
+
+            <label><input type="radio" name="action" value="click" required> Click Link</label><br>
+            <label><input type="radio" name="action" value="verify"> Verify on official website</label><br>
+            <label><input type="radio" name="action" value="ignore"> Ignore message</label><br>
+            <label><input type="radio" name="action" value="share"> Share OTP / Details</label><br><br>
+
+            <button type="submit">Submit Answer</button>
+
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>
