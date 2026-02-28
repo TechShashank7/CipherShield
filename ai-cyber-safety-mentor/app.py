@@ -3,6 +3,7 @@ import joblib
 import re
 
 app = Flask(__name__)
+app.secret_key = "supersecretkey"
 
 # Load ML model
 model = joblib.load("scam_model.pkl")
@@ -228,5 +229,5 @@ def next_round():
         risk=session["risk_score"]
     )
 
-# if __name__ == "__main__":
-#     app.run(host="0.0.0.0", port=5000)
+if __name__ == "__main__":
+    app.run(debug=True)
