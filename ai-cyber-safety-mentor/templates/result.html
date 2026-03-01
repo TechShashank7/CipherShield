@@ -1,25 +1,119 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Challenge Result</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Challenge Complete</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .result-container {
+            max-width: 600px;
+            margin: 80px auto;
+            text-align: center;
+        }
+
+        .result-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e5e7eb; /* temporary base */
+        }
+
+        .score-inner {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .status-badge {
+            margin-top: 15px;
+            padding: 8px 18px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .guardian {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .vulnerable {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .highrisk {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .play-btn {
+            margin-top: 25px;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-
-    <h1>Cyber Immunity Challenge Complete</h1>
-
+<div class="result-container">
     <div class="result-card">
-        <h2>Your Final Cyber Risk Score: {{ score }}</h2>
+        <h2>Cyber Immunity Challenge Complete</h2>
 
-        <h3>Status: {{ verdict }}</h3>
+        <div class="score-circle" id="scoreCircle" data-score="{{ score }}">
+            <div class="score-inner">
+                {{ score }}
+            </div>
+        </div>
+
+        <div class="
+            status-badge
+            {% if verdict == 'Cyber Guardian' %}
+                guardian
+            {% elif verdict == 'Aware but Vulnerable' %}
+                vulnerable
+            {% else %}
+                highrisk
+            {% endif %}
+        ">
+            {{ verdict }}
+        </div>
+
+        <p style="margin-top:20px;">
+            {% if verdict == 'Cyber Guardian' %}
+                You demonstrated strong resistance against phishing manipulation.
+            {% elif verdict == 'Aware but Vulnerable' %}
+                You detected some threats but missed critical signals.
+            {% else %}
+                You are highly vulnerable to social engineering attacks.
+            {% endif %}
+        </p>
+
+        <button class="play-btn" onclick="window.location.href='/challenge'">
+            Play Again
+        </button>
+
     </div>
-
-    <br>
-    <a href="/challenge"><button>Play Again</button></a>
-
 </div>
+<script>
+    const circle = document.getElementById("scoreCircle");
+    const score = parseInt(circle.dataset.score);
 
+    circle.style.background = `conic-gradient(#22c55e ${score}%, #e5e7eb ${score}%)`;
+</script>
 </body>
 </html>
