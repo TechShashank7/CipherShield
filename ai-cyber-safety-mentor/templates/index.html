@@ -1,71 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>AI Cyber Safety Mentor</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 </head>
 <body>
-
-<div class="container">
-    <h1>AI Cyber Safety Mentor</h1>
-    <p class="subtitle">Hybrid ML + Behavioral Fraud Detection Engine</p>
-
-    <div class="card">
-        <h2>Scam Detection Engine</h2>
-
-        <textarea id="message" placeholder="Paste suspicious message here..."></textarea>
-
-        <button onclick="analyze()">Analyze Message</button>
-
-        <div id="result" class="result hidden"></div>
-    </div>
-</div>
-
-<script>
-    function analyze() {
-        let message = document.getElementById("message").value;
-
-        fetch("/analyze", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: "message=" + encodeURIComponent(message)
-        })
-        .then(response => response.json())
-        .then(data => {
-
-            let riskColor = "green";
-            if (data.confidence >= 70) riskColor = "red";
-            else if (data.confidence >= 40) riskColor = "orange";
-
-            // Glass advisory card (no heading)
-            let advisoryHTML = "";
-            if (data.learning_cards && data.learning_cards.length > 0) {
-                advisoryHTML = `
-                    <div class="advisory-card">
-                        ${data.learning_cards.map(item => `<p>• ${item}</p>`).join("")}
-                    </div>
-                `;
-            }
-
-            document.getElementById("result").classList.remove("hidden");
-            document.getElementById("result").innerHTML = `
-                <div class="risk ${riskColor}">
-                    ${data.label}
-                </div>
-
-                <div class="progress-bar">
-                    <div class="progress" style="width:${data.confidence}%"></div>
-                </div>
-
-                <p><b>Confidence:</b> ${data.confidence}%</p>
-                <p><b>Psychological Triggers:</b> ${data.triggers.join(", ") || "None detected"}</p>
-
-                ${advisoryHTML}
-            `;
-        });
-    }
-</script>
+    
 </body>
 </html>

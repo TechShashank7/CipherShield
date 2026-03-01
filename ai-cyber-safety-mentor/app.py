@@ -153,6 +153,10 @@ def generate_last4():
 def home():
     return render_template("index.html")
 
+@app.route('/scam-detection')
+def scam_detection():
+    return render_template("scam_detection.html")
+
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
