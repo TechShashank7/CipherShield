@@ -283,6 +283,13 @@ def next_round():
 def result():
     final_score = session.get("risk_score", 0)
 
+    # Temporary fallback until profiling engine integrated
+    dominant_vulnerability = session.get("dominant_vulnerability", "urgency")
+    recommendation = session.get(
+        "recommendation",
+        "Practice high-pressure scam simulations to improve resistance."
+    )
+
     if final_score >= 85:
         verdict = "Cyber Guardian"
     elif final_score >= 60:
@@ -293,7 +300,9 @@ def result():
     return render_template(
         "result.html",
         score=final_score,
-        verdict=verdict
+        verdict=verdict,
+        dominant_vulnerability=dominant_vulnerability,
+        recommendation=recommendation
     )
 
 if __name__ == "__main__":
