@@ -12,7 +12,7 @@
     <p>Round {{ round }} of 7</p>
 
     <div class="score-box">
-        <strong>Current Cyber Risk Score:</strong> {{ risk }}
+        <strong>Current Cyber Risk Score:</strong> <span id="liveScore">{{ risk }}</span>
     </div>
 
     <div class="card">
@@ -45,6 +45,21 @@
 
 </div>
 <script>
+
+function animateScore(newScore) {
+    const scoreEl = document.getElementById("liveScore");
+    let current = parseInt(scoreEl.innerText);
+
+    const interval = setInterval(() => {
+        if (current === newScore) {
+            clearInterval(interval);
+        } else {
+            current += (newScore > current ? 1 : -1);
+            scoreEl.innerText = current;
+        }
+    }, 15);
+}
+
 document.getElementById("challengeForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
@@ -57,58 +72,69 @@ document.getElementById("challengeForm").addEventListener("submit", function(e) 
     .then(res => res.json())
     .then(data => {
 
+        // Remove old feedback if exists
+        const oldFeedback = document.querySelector(".feedback-card");
+        if (oldFeedback) oldFeedback.remove();
+
         const feedbackDiv = document.createElement("div");
         feedbackDiv.classList.add("feedback-card");
 
+        let explanation = "";
+
         if (data.success) {
             feedbackDiv.classList.add("feedback-success");
-            feedbackDiv.innerHTML = `
-                <h3>Excellent Detection!</h3>
-                <p>You correctly identified the manipulation tactics.</p>
-                <p><strong>Updated Cyber Risk Score:</strong> ${data.score}</p>
-            `;
+            explanation += "<h3>Strong Awareness Displayed</h3>";
+            explanation += "<p>You correctly detected the manipulation patterns in this message.</p>";
         } else {
             feedbackDiv.classList.add("feedback-fail");
-            feedbackDiv.innerHTML = `
-                <h3>Be Careful!</h3>
-                <p>You missed some warning signs or chose a risky action.</p>
-                <p><strong>Updated Cyber Risk Score:</strong> ${data.score}</p>
-            `;
+            explanation += "<h3>Vulnerability Detected</h3>";
+            explanation += "<p>You missed some psychological red flags or chose a risky response.</p>";
         }
 
-        feedbackDiv.style.marginTop = "20px";
-        feedbackDiv.style.opacity = "0";
-        feedbackDiv.style.transform = "translateY(20px)";
-        feedbackDiv.style.transition = "all 0.5s ease";
+        if (data.selected_flags.length > 0) {
+            explanation += `<p><strong>You flagged:</strong> ${data.selected_flags.join(", ")}</p>`;
+        } else {
+            explanation += `<p><strong>You did not flag any warning signs.</strong></p>`;
+        }
+
+        explanation += `<p><strong>Actual red flags:</strong> ${data.correct_flags.join(", ")}</p>`;
+
+        if (data.action !== data.correct_action) {
+            explanation += `<p><strong>Safer Action:</strong> ${data.correct_action}</p>`;
+        }
+
+        explanation += `<p><strong>Updated Cyber Risk Score:</strong> ${data.score}</p>`;
+
+        feedbackDiv.innerHTML = explanation;
 
         document.querySelector(".card").appendChild(feedbackDiv);
 
-        setTimeout(() => {
-            feedbackDiv.style.opacity = "1";
-            feedbackDiv.style.transform = "translateY(0)";
-        }, 50);
+        // Animate score update
+        animateScore(data.score);
+
+        // Add Next button
+        const nextBtn = document.createElement("button");
+        nextBtn.style.marginTop = "20px";
 
         if (!data.game_over) {
-            const nextBtn = document.createElement("button");
             nextBtn.innerText = "Next Round";
-            nextBtn.style.marginTop = "15px";
             nextBtn.onclick = function() {
                 window.location.href = "/next_round";
             };
-            feedbackDiv.appendChild(nextBtn);
         } else {
-            const resultBtn = document.createElement("button");
-            resultBtn.innerText = "See Final Result";
-            resultBtn.style.marginTop = "15px";
-            resultBtn.onclick = function() {
+            nextBtn.innerText = "See Final Result";
+            nextBtn.onclick = function() {
                 window.location.href = "/result";
             };
-            feedbackDiv.appendChild(resultBtn);
         }
 
-        document.getElementById("challengeForm").querySelector("button").disabled = true;
+        feedbackDiv.appendChild(nextBtn);
+
+        // Disable submit button after answer
+        document.querySelector("#challengeForm button").disabled = true;
     });
 });
+
 </script>
 </body>
 </html>

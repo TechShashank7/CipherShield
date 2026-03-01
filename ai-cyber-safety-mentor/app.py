@@ -254,10 +254,13 @@ def submit_round():
     game_over = session["current_round"] >= 7
 
     return jsonify({
-        "success": success,
-        "score": session["risk_score"],
-        "game_over": game_over,
-        "next_round": session["current_round"] + 1
+    "success": success,
+    "score": session["risk_score"],
+    "game_over": game_over,
+    "selected_flags": selected_flags,
+    "correct_flags": correct_flags,
+    "action": action,
+    "correct_action": correct_action
     })
 
 @app.route('/next_round')
