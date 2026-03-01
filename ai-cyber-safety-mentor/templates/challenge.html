@@ -22,8 +22,7 @@
             {{ scenario.message }}
         </div>
 
-        <form method="POST" action="/submit_round">
-
+        <form id="challengeForm">
             <h4>What looks suspicious? (Select all that apply)</h4>
 
             <label><input type="checkbox" name="flags" value="link"> Suspicious Link</label><br>
@@ -45,6 +44,22 @@
     </div>
 
 </div>
+<script>
+    document.getElementById("challengeForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        fetch("/submit_round", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            showFeedback(data);
+        });
+    });
+</script>
 
 </body>
 </html>

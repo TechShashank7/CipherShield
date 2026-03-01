@@ -63,57 +63,91 @@ def generate_learning_cards(triggers):
 import random
 
 scenario_pool = [
+
     {
-        "message": "RBI Notice: Your account will be suspended. Verify immediately at http://rbi-secure.in",
-        "correct_flags": ["link", "authority", "urgency"],
+        "template": "RBI ALERT: Your bank account linked with Aadhaar ending ****{last4} has been temporarily restricted due to suspicious activity. Complete verification within 30 minutes at {link} to avoid permanent suspension.",
+        "correct_flags": ["authority", "urgency", "link"],
         "correct_action": "verify"
     },
+
     {
-        "message": "You have won ₹75,000 cashback. Share OTP to claim now.",
+        "template": "Income Tax Dept: Your refund of ₹{amount} has been approved for FY 2024-25. Submit your bank confirmation details at {link} before 6 PM today.",
+        "correct_flags": ["authority", "link", "urgency"],
+        "correct_action": "verify"
+    },
+
+    {
+        "template": "Your UPI ID has been flagged for unusual transactions of ₹{amount}. If not verified within 15 minutes, outgoing transfers will be blocked. Update KYC here: {link}",
+        "correct_flags": ["urgency", "link"],
+        "correct_action": "verify"
+    },
+
+    {
+        "template": "Congratulations! You’ve won ₹{amount} cashback under the Digital India Rewards Program. To receive the amount, confirm your mobile OTP now.",
+        "correct_flags": ["reward", "authority"],
+        "correct_action": "ignore"
+    },
+
+    {
+        "template": "Dear Customer, your debit card ending ****{last4} was used for an international transaction. If this wasn’t you, call our emergency desk immediately at {phone}.",
+        "correct_flags": ["urgency"],
+        "correct_action": "verify"
+    },
+
+    {
+        "template": "KYC UPDATE REQUIRED: As per RBI compliance norms, your bank account will be frozen within 24 hours if identity verification is not completed at {link}.",
+        "correct_flags": ["authority", "urgency", "link"],
+        "correct_action": "verify"
+    },
+
+    {
+        "template": "Electricity Board Notice: Payment of ₹{amount} failed. Your connection will be disconnected tonight unless you confirm payment at {link}.",
+        "correct_flags": ["authority", "urgency", "link"],
+        "correct_action": "verify"
+    },
+
+    {
+        "template": "Loan Pre-Approval Notice: You are eligible for a pre-approved loan of ₹{amount} at 0% processing fee. Activate offer immediately by submitting your Aadhaar and PAN details.",
         "correct_flags": ["reward", "urgency"],
         "correct_action": "ignore"
     },
+
     {
-        "message": "Your electricity bill payment failed. Reconfirm details at http://pay-electricity.in",
-        "correct_flags": ["link"],
+        "template": "Your SIM card will be deactivated within 2 hours due to KYC mismatch. Verify now at {link} to avoid permanent number suspension.",
+        "correct_flags": ["urgency", "link"],
         "correct_action": "verify"
     },
+
     {
-        "message": "Bank alert: Suspicious login detected. Click link to secure account.",
-        "correct_flags": ["link", "authority"],
-        "correct_action": "verify"
-    },
-    {
-        "message": "Dear customer, your KYC has expired. Update within 24 hours.",
-        "correct_flags": ["authority", "urgency"],
-        "correct_action": "verify"
-    },
-    {
-        "message": "Income Tax refund approved. Submit bank details to receive ₹12,000.",
+        "template": "Government Subsidy Update: You are shortlisted for the PM Financial Assistance Scheme. Confirm eligibility by sharing OTP sent to your registered number.",
         "correct_flags": ["authority"],
-        "correct_action": "verify"
-    },
-    {
-        "message": "Your UPI account will be blocked. Update KYC immediately.",
-        "correct_flags": ["urgency"],
-        "correct_action": "verify"
-    },
-    {
-        "message": "You are selected for a government scheme. Share OTP to confirm.",
-        "correct_flags": ["authority"],
-        "correct_action": "ignore"
-    },
-    {
-        "message": "Your debit card has unusual activity. Call this number immediately.",
-        "correct_flags": ["urgency"],
-        "correct_action": "verify"
-    },
-    {
-        "message": "Congratulations! You are eligible for exclusive loan benefits.",
-        "correct_flags": ["reward"],
         "correct_action": "ignore"
     }
 ]
+
+import random
+import string
+
+def generate_phone():
+    return "+91 " + str(random.randint(6000000000, 9999999999))
+
+def generate_fake_link():
+    domains = [
+        "rbi-secure-verification",
+        "income-tax-refund",
+        "upi-kyc-update",
+        "govt-assistance-portal",
+        "secure-bank-auth",
+        "electricity-confirm",
+        "sim-kyc-update"
+    ]
+    return "http://" + random.choice(domains) + ".in"
+
+def generate_amount():
+    return str(random.randint(1200, 95000))
+
+def generate_last4():
+    return str(random.randint(1000, 9999))
 
 @app.route('/')
 def home():
@@ -158,6 +192,16 @@ def challenge():
     session["current_round"] = 0
 
     shuffled = random.sample(scenario_pool, 7)
+
+    # Generate realistic messages from templates
+    for s in shuffled:
+        msg = s["template"]
+        msg = msg.replace("{phone}", generate_phone())
+        msg = msg.replace("{link}", generate_fake_link())
+        msg = msg.replace("{amount}", generate_amount())
+        msg = msg.replace("{last4}", generate_last4())
+        s["message"] = msg  # Create final message field
+
     session["game_scenarios"] = shuffled
 
     return render_template(
