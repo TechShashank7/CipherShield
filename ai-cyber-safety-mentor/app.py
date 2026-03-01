@@ -224,8 +224,8 @@ def submit_round():
     correct_flags = scenario["correct_flags"]
     correct_action = scenario["correct_action"]
 
-    feedback = ""
     success = True
+    missed_flags = []
 
     # Flag scoring
     for flag in selected_flags:
@@ -235,6 +235,11 @@ def submit_round():
             round_score -= 3
             success = False
 
+    for flag in correct_flags:
+        if flag not in selected_flags:
+            missed_flags.append(flag)
+            success = False
+
     # Action scoring
     if action == correct_action:
         round_score += 10
@@ -242,24 +247,18 @@ def submit_round():
         round_score -= 20
         success = False
 
-    # Update risk
     session["risk_score"] += round_score
     session["risk_score"] = max(0, min(100, session["risk_score"]))
-
-    # Prepare feedback message
-    if success:
-        feedback = "Excellent analysis! You identified the manipulation tactics correctly."
-    else:
-        feedback = "You fell into a manipulation pattern. Review the suspicious elements carefully next time."
-
     session["current_round"] += 1
 
-    return render_template(
-        "feedback.html",
-        success=success,
-        feedback=feedback,
-        score=session["risk_score"]
-    )
+    game_over = session["current_round"] >= 7
+
+    return jsonify({
+        "success": success,
+        "score": session["risk_score"],
+        "game_over": game_over,
+        "next_round": session["current_round"] + 1
+    })
 
 @app.route('/next_round')
 def next_round():

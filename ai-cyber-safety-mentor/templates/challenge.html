@@ -45,21 +45,70 @@
 
 </div>
 <script>
-    document.getElementById("challengeForm").addEventListener("submit", function(e) {
-        e.preventDefault();
+document.getElementById("challengeForm").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-        const formData = new FormData(this);
+    const formData = new FormData(this);
 
-        fetch("/submit_round", {
-            method: "POST",
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            showFeedback(data);
-        });
+    fetch("/submit_round", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        const feedbackDiv = document.createElement("div");
+        feedbackDiv.classList.add("feedback-card");
+
+        if (data.success) {
+            feedbackDiv.classList.add("feedback-success");
+            feedbackDiv.innerHTML = `
+                <h3>Excellent Detection!</h3>
+                <p>You correctly identified the manipulation tactics.</p>
+                <p><strong>Updated Cyber Risk Score:</strong> ${data.score}</p>
+            `;
+        } else {
+            feedbackDiv.classList.add("feedback-fail");
+            feedbackDiv.innerHTML = `
+                <h3>Be Careful!</h3>
+                <p>You missed some warning signs or chose a risky action.</p>
+                <p><strong>Updated Cyber Risk Score:</strong> ${data.score}</p>
+            `;
+        }
+
+        feedbackDiv.style.marginTop = "20px";
+        feedbackDiv.style.opacity = "0";
+        feedbackDiv.style.transform = "translateY(20px)";
+        feedbackDiv.style.transition = "all 0.5s ease";
+
+        document.querySelector(".card").appendChild(feedbackDiv);
+
+        setTimeout(() => {
+            feedbackDiv.style.opacity = "1";
+            feedbackDiv.style.transform = "translateY(0)";
+        }, 50);
+
+        if (!data.game_over) {
+            const nextBtn = document.createElement("button");
+            nextBtn.innerText = "Next Round";
+            nextBtn.style.marginTop = "15px";
+            nextBtn.onclick = function() {
+                window.location.href = "/next_round";
+            };
+            feedbackDiv.appendChild(nextBtn);
+        } else {
+            const resultBtn = document.createElement("button");
+            resultBtn.innerText = "See Final Result";
+            resultBtn.style.marginTop = "15px";
+            resultBtn.onclick = function() {
+                window.location.href = "/result";
+            };
+            feedbackDiv.appendChild(resultBtn);
+        }
+
+        document.getElementById("challengeForm").querySelector("button").disabled = true;
     });
+});
 </script>
-
 </body>
 </html>
