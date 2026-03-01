@@ -9,11 +9,18 @@
 <div class="container">
 
     <h1>Cyber Immunity Challenge</h1>
-    <p>Round {{ round }} of 7</p>
-
-    <div class="score-box">
-        <strong>Current Cyber Risk Score:</strong> <span id="liveScore">{{ risk }}</span>
+    <div class="header-bar">
+    <div>
+        <strong>Round {{ round }} of 7</strong>
     </div>
+    <div>
+        Risk Score: <span id="liveScore">{{ risk }}</span>
+    </div>
+</div>
+
+<div class="progress-container">
+    <div class="progress-fill" id="riskBar"></div>
+</div>
 
     <div class="card">
         <h3>Analyze the Message Carefully</h3>
@@ -45,9 +52,14 @@
 
 </div>
 <script>
-
+window.addEventListener("DOMContentLoaded", function() {
+    const initialScore = parseInt(document.getElementById("liveScore").innerText);
+    document.getElementById("riskBar").style.width = initialScore + "%";
+});
 function animateScore(newScore) {
     const scoreEl = document.getElementById("liveScore");
+    const bar = document.getElementById("riskBar");
+
     let current = parseInt(scoreEl.innerText);
 
     const interval = setInterval(() => {
@@ -56,8 +68,9 @@ function animateScore(newScore) {
         } else {
             current += (newScore > current ? 1 : -1);
             scoreEl.innerText = current;
+            bar.style.width = current + "%";
         }
-    }, 15);
+    }, 10);
 }
 
 document.getElementById("challengeForm").addEventListener("submit", function(e) {
