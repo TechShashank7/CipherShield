@@ -52,102 +52,104 @@
 
 </div>
 <script>
-window.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
+
+    // Initialize progress bar
     const initialScore = parseInt(document.getElementById("liveScore").innerText);
     document.getElementById("riskBar").style.width = initialScore + "%";
+
+    function animateScore(newScore) {
+        const scoreEl = document.getElementById("liveScore");
+        const bar = document.getElementById("riskBar");
+
+        let current = parseInt(scoreEl.innerText);
+
+        const interval = setInterval(() => {
+            if (current === newScore) {
+                clearInterval(interval);
+            } else {
+                current += (newScore > current ? 1 : -1);
+                scoreEl.innerText = current;
+                bar.style.width = current + "%";
+            }
+        }, 10);
+    }
+
+    const form = document.getElementById("challengeForm");
+
+    if (form) {
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch("/submit_round", {
+                method: "POST",
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+
+                const oldFeedback = document.querySelector(".feedback-card");
+                if (oldFeedback) oldFeedback.remove();
+
+                const feedbackDiv = document.createElement("div");
+                feedbackDiv.classList.add("feedback-card");
+
+                let explanation = "";
+
+                if (data.success) {
+                    feedbackDiv.classList.add("feedback-success");
+                    explanation += "<h3>Strong Awareness Displayed</h3>";
+                    explanation += "<p>You correctly detected the manipulation patterns.</p>";
+                } else {
+                    feedbackDiv.classList.add("feedback-fail");
+                    explanation += "<h3>Vulnerability Detected</h3>";
+                    explanation += "<p>You missed red flags or chose a risky response.</p>";
+                }
+
+                if (data.selected_flags.length > 0) {
+                    explanation += `<p><strong>You flagged:</strong> ${data.selected_flags.join(", ")}</p>`;
+                } else {
+                    explanation += `<p><strong>You did not flag any warning signs.</strong></p>`;
+                }
+
+                explanation += `<p><strong>Actual red flags:</strong> ${data.correct_flags.join(", ")}</p>`;
+
+                if (data.action !== data.correct_action) {
+                    explanation += `<p><strong>Safer Action:</strong> ${data.correct_action}</p>`;
+                }
+
+                explanation += `<p><strong>Updated Cyber Risk Score:</strong> ${data.score}</p>`;
+
+                feedbackDiv.innerHTML = explanation;
+
+                document.querySelector(".card").appendChild(feedbackDiv);
+
+                animateScore(data.score);
+
+                const nextBtn = document.createElement("button");
+                nextBtn.style.marginTop = "20px";
+
+                if (!data.game_over) {
+                    nextBtn.innerText = "Next Round";
+                    nextBtn.onclick = function() {
+                        window.location.href = "/next_round";
+                    };
+                } else {
+                    nextBtn.innerText = "See Final Result";
+                    nextBtn.onclick = function() {
+                        window.location.href = "/result";
+                    };
+                }
+
+                feedbackDiv.appendChild(nextBtn);
+
+                form.querySelector("button").disabled = true;
+            });
+        });
+    }
 });
-function animateScore(newScore) {
-    const scoreEl = document.getElementById("liveScore");
-    const bar = document.getElementById("riskBar");
-
-    let current = parseInt(scoreEl.innerText);
-
-    const interval = setInterval(() => {
-        if (current === newScore) {
-            clearInterval(interval);
-        } else {
-            current += (newScore > current ? 1 : -1);
-            scoreEl.innerText = current;
-            bar.style.width = current + "%";
-        }
-    }, 10);
-}
-
-document.getElementById("challengeForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    const formData = new FormData(this);
-
-    fetch("/submit_round", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-
-        // Remove old feedback if exists
-        const oldFeedback = document.querySelector(".feedback-card");
-        if (oldFeedback) oldFeedback.remove();
-
-        const feedbackDiv = document.createElement("div");
-        feedbackDiv.classList.add("feedback-card");
-
-        let explanation = "";
-
-        if (data.success) {
-            feedbackDiv.classList.add("feedback-success");
-            explanation += "<h3>Strong Awareness Displayed</h3>";
-            explanation += "<p>You correctly detected the manipulation patterns in this message.</p>";
-        } else {
-            feedbackDiv.classList.add("feedback-fail");
-            explanation += "<h3>Vulnerability Detected</h3>";
-            explanation += "<p>You missed some psychological red flags or chose a risky response.</p>";
-        }
-
-        if (data.selected_flags.length > 0) {
-            explanation += `<p><strong>You flagged:</strong> ${data.selected_flags.join(", ")}</p>`;
-        } else {
-            explanation += `<p><strong>You did not flag any warning signs.</strong></p>`;
-        }
-
-        explanation += `<p><strong>Actual red flags:</strong> ${data.correct_flags.join(", ")}</p>`;
-
-        if (data.action !== data.correct_action) {
-            explanation += `<p><strong>Safer Action:</strong> ${data.correct_action}</p>`;
-        }
-
-        explanation += `<p><strong>Updated Cyber Risk Score:</strong> ${data.score}</p>`;
-
-        feedbackDiv.innerHTML = explanation;
-
-        document.querySelector(".card").appendChild(feedbackDiv);
-
-        // Animate score update
-        animateScore(data.score);
-
-        // Add Next button
-        const nextBtn = document.createElement("button");
-        nextBtn.style.marginTop = "20px";
-
-        if (!data.game_over) {
-            nextBtn.innerText = "Next Round";
-            nextBtn.onclick = function() {
-                window.location.href = "/next_round";
-            };
-        } else {
-            nextBtn.innerText = "See Final Result";
-            nextBtn.onclick = function() {
-                window.location.href = "/result";
-            };
-        }
-
-        feedbackDiv.appendChild(nextBtn);
-
-        // Disable submit button after answer
-        document.querySelector("#challengeForm button").disabled = true;
-    });
-});
-
 </script>
 </body>
 </html>

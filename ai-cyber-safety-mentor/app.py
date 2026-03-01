@@ -6,8 +6,12 @@ app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
 # Load ML model
-model = joblib.load("scam_model.pkl")
-vectorizer = joblib.load("vectorizer.pkl")
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+model = joblib.load(os.path.join(BASE_DIR, "scam_model.pkl"))
+vectorizer = joblib.load(os.path.join(BASE_DIR, "vectorizer.pkl"))
 
 # Psychological trigger keywords
 urgency_words = ["urgent", "immediately", "now", "expire", "limited"]
@@ -192,27 +196,41 @@ def analyze():
 
 @app.route('/challenge')
 def challenge():
-    session["risk_score"] = 70
+    session["risk_score"] = 100
     session["current_round"] = 0
 
-    shuffled = random.sample(scenario_pool, 7)
+    # Initialize vulnerability profile
+    session["vulnerability"] = {
+        "urgency": 0,
+        "authority": 0,
+        "reward": 0,
+        "link": 0
+    }
 
-    # Generate realistic messages from templates
-    for s in shuffled:
-        msg = s["template"]
-        msg = msg.replace("{phone}", generate_phone())
-        msg = msg.replace("{link}", generate_fake_link())
-        msg = msg.replace("{amount}", generate_amount())
-        msg = msg.replace("{last4}", generate_last4())
-        s["message"] = msg  # Create final message field
+    # We will NOT pre-generate all scenarios anymore
+    session["game_scenarios"] = []
 
-    session["game_scenarios"] = shuffled
+    # Select first scenario randomly (no adaptation yet)
+    scenario_template = random.choice(scenario_pool)
+
+    # Generate realistic message from template
+    msg = scenario_template["template"]
+    msg = msg.replace("{phone}", generate_phone())
+    msg = msg.replace("{link}", generate_fake_link())
+    msg = msg.replace("{amount}", generate_amount())
+    msg = msg.replace("{last4}", generate_last4())
+
+    scenario = scenario_template.copy()
+    scenario["message"] = msg
+
+    # Save first scenario
+    session["game_scenarios"].append(scenario)
 
     return render_template(
         "challenge.html",
-        scenario=shuffled[0],
+        scenario=scenario,
         round=1,
-        risk=70
+        risk=session["risk_score"]
     )
 
 @app.route('/submit_round', methods=['POST'])
@@ -220,57 +238,96 @@ def submit_round():
     selected_flags = request.form.getlist("flags")
     action = request.form.get("action")
 
-    current_round = session["current_round"]
     scenarios = session["game_scenarios"]
-    scenario = scenarios[current_round]
 
-    round_score = 0
+    if not scenarios:
+        return jsonify({"error": "No active scenario"}), 400
+
+    scenario = scenarios[-1]
+
     correct_flags = scenario["correct_flags"]
     correct_action = scenario["correct_action"]
 
     success = True
-    missed_flags = []
+    round_penalty = 0
 
-    # Flag scoring
-    for flag in selected_flags:
-        if flag in correct_flags:
-            round_score += 5
-        else:
-            round_score -= 3
-            success = False
-
+    # 🔴 1. Missed correct flags
     for flag in correct_flags:
         if flag not in selected_flags:
-            missed_flags.append(flag)
+            round_penalty += 5
             success = False
 
-    # Action scoring
-    if action == correct_action:
-        round_score += 10
-    else:
-        round_score -= 20
+            # Track vulnerability
+            if flag in session["vulnerability"]:
+                session["vulnerability"][flag] += 1
+
+    # 🔴 2. Wrong extra flags selected
+    for flag in selected_flags:
+        if flag not in correct_flags:
+            round_penalty += 3
+            success = False
+
+    # 🔴 3. Wrong action taken
+    if action != correct_action:
+        round_penalty += 15
         success = False
 
-    session["risk_score"] += round_score
-    session["risk_score"] = max(0, min(100, session["risk_score"]))
-    session["current_round"] += 1
+        # Most wrong actions happen under urgency pressure
+        session["vulnerability"]["urgency"] += 1
 
+    # 🔴 Deduct from immunity score
+    session["risk_score"] -= round_penalty
+    session["risk_score"] = max(0, session["risk_score"])
+
+    session["current_round"] += 1
     game_over = session["current_round"] >= 7
 
     return jsonify({
-    "success": success,
-    "score": session["risk_score"],
-    "game_over": game_over,
-    "selected_flags": selected_flags,
-    "correct_flags": correct_flags,
-    "action": action,
-    "correct_action": correct_action
+        "success": success,
+        "score": session["risk_score"],
+        "game_over": game_over,
+        "selected_flags": selected_flags,
+        "correct_flags": correct_flags,
+        "action": action,
+        "correct_action": correct_action
     })
 
 @app.route('/next_round')
 def next_round():
     current_round = session["current_round"]
-    scenario = session["game_scenarios"][current_round]
+    vulnerability = session.get("vulnerability", {})
+
+    # Decide scenario selection strategy
+    if current_round < 2:
+        # First 2 rounds are random
+        scenario_template = random.choice(scenario_pool)
+    else:
+        # Adaptive selection based on dominant vulnerability
+        dominant = max(vulnerability, key=vulnerability.get)
+
+        adaptive_pool = [
+            s for s in scenario_pool
+            if dominant in s["correct_flags"]
+        ]
+
+        # Fallback if no matching scenario
+        if not adaptive_pool:
+            adaptive_pool = scenario_pool
+
+        scenario_template = random.choice(adaptive_pool)
+
+    # Generate realistic message
+    msg = scenario_template["template"]
+    msg = msg.replace("{phone}", generate_phone())
+    msg = msg.replace("{link}", generate_fake_link())
+    msg = msg.replace("{amount}", generate_amount())
+    msg = msg.replace("{last4}", generate_last4())
+
+    scenario = scenario_template.copy()
+    scenario["message"] = msg
+
+    # Save scenario to session history
+    session["game_scenarios"].append(scenario)
 
     return render_template(
         "challenge.html",
@@ -282,13 +339,20 @@ def next_round():
 @app.route('/result')
 def result():
     final_score = session.get("risk_score", 0)
+    vulnerability = session.get("vulnerability", {})
 
-    # Temporary fallback until profiling engine integrated
-    dominant_vulnerability = session.get("dominant_vulnerability", "urgency")
-    recommendation = session.get(
-        "recommendation",
-        "Practice high-pressure scam simulations to improve resistance."
-    )
+    # Find dominant vulnerability
+    dominant = max(vulnerability, key=vulnerability.get)
+
+    # Recommendation mapping
+    recommendations = {
+        "urgency": "You tend to react under pressure. Practice slowing down before taking action.",
+        "authority": "You trust official-looking messages easily. Always verify independently.",
+        "reward": "You are attracted to reward-based offers. Be cautious of unrealistic benefits.",
+        "link": "You may click suspicious links. Always inspect URLs carefully before opening."
+    }
+
+    recommendation = recommendations.get(dominant, "Stay alert and keep practicing.")
 
     if final_score >= 85:
         verdict = "Cyber Guardian"
@@ -297,11 +361,18 @@ def result():
     else:
         verdict = "High Risk Target"
 
+    print("FINAL PROFILE:", {
+        "dominant_vulnerability": dominant,
+        "vulnerability_score_breakdown": vulnerability,
+        "recommendation": recommendation
+    })
+
     return render_template(
         "result.html",
         score=final_score,
         verdict=verdict,
-        dominant_vulnerability=dominant_vulnerability,
+        dominant=dominant,
+        breakdown=vulnerability,
         recommendation=recommendation
     )
 

@@ -264,3 +264,8 @@ label:hover {
     border-radius: 12px;
     margin-top: 15px;
 }
+
+.breakdown p {
+    margin: 4px 0;
+    font-size: 14px;
+}
