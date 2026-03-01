@@ -275,5 +275,22 @@ def next_round():
         risk=session["risk_score"]
     )
 
+@app.route('/result')
+def result():
+    final_score = session.get("risk_score", 0)
+
+    if final_score >= 85:
+        verdict = "Cyber Guardian"
+    elif final_score >= 60:
+        verdict = "Aware but Vulnerable"
+    else:
+        verdict = "High Risk Target"
+
+    return render_template(
+        "result.html",
+        score=final_score,
+        verdict=verdict
+    )
+
 if __name__ == "__main__":
     app.run(debug=True)

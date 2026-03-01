@@ -13,19 +13,7 @@
     <div class="result-card">
         <h2>Your Final Cyber Risk Score: {{ score }}</h2>
 
-        {% if score >= 85 %}
-            <p class="result-text green-text">
-                Outstanding Cyber Awareness! You demonstrate strong resistance against phishing manipulation.
-            </p>
-        {% elif score >= 60 %}
-            <p class="result-text orange-text">
-                Moderate Awareness. You identified some risks but improvement is recommended.
-            </p>
-        {% else %}
-            <p class="result-text red-text">
-                High Vulnerability Detected. Additional cyber safety training is strongly recommended.
-            </p>
-        {% endif %}
+        <h3>Status: {{ verdict }}</h3>
     </div>
 
     <br>
