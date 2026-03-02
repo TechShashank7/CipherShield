@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Scam Checker - CyberGuard AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+        <nav class="navbar glass-card">
+            <div class="container nav-container">
+                <a href="/" class="logo">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    <span>CyberGuard <span class="gradient-text">AI</span></span>
+                </a>
+
+                <div class="nav-links">
+                    <a href="/">Home</a>
+                    <a href="/challenge">Simulation</a>
+                    <a href="/scam-detection" class="active">Scam Checker</a>
+                </div>
+                <a href="/"
+                    style="display:flex; color: #fff; background: rgba(255,255,255,0.1); padding: 6px; border-radius: 5px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                        <polyline points="10 17 15 12 10 7" />
+                        <line x1="15" y1="12" x2="3" y2="12" />
+                    </svg>
+                </a>
+            </div>
+        </nav>
+
+        <main class="checker-container dashboard-page fade-in">
+            <div class="glass-card" style="padding: 4rem;">
+                <h2 class="section-title text-center" style="margin-bottom: 2rem;">AI Scam <span
+                        class="gradient-text">Detector</span></h2>
+                <p class="text-center text-muted">Paste a suspicious message below and our AI will analyze its
+                    psychological triggers.</p>
+
+                <div class="input-group">
+                    <textarea id="message"
+                        placeholder="Paste message here... e.g., 'Congratulations! You won ₹5 lakh. Click below to claim.'"
+                        class="scam-textarea"></textarea>
+
+                    <button id="analyzeBtn" class="btn-primary checker-btn" onclick="analyze()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                        Analyze Now
+                    </button>
+                </div>
+
+                <div class="checker-result-placeholder">
+                    <div id="defaultState" class="result-item default-state">
+                        <div class="info-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="16" x2="12" y2="12" />
+                                <line x1="12" y1="8" x2="12.01" y2="8" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 style="margin-bottom: 0.5rem; color: var(--text-main);">Analyze patterns of fraud
+                                securely</h4>
+                            <p style="font-size: 0.9rem;">We check for UPI fraud, OTP scams, fake KYC, and behavioral
+                                manipulation.</p>
+                        </div>
+                    </div>
+
+                    <div id="scanningState" class="scanning-animation hidden text-center">
+                        <div class="scanner-line"></div>
+                        <p style="color: var(--primary); margin-top: 2rem;">Running heuristic analysis & psychological
+                            profiling...</p>
+                    </div>
+
+                    <div id="resultState" class="analysis-results hidden fade-in"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function analyze() {
+            let message = document.getElementById("message").value;
+            if (!message.trim()) return;
+
+            const btn = document.getElementById("analyzeBtn");
+            const defaultState = document.getElementById("defaultState");
+            const scanningState = document.getElementById("scanningState");
+            const resultState = document.getElementById("resultState");
+
+            btn.disabled = true;
+            btn.innerHTML = 'Analyzing Patterns...';
+
+            defaultState.classList.add("hidden");
+            resultState.classList.add("hidden");
+            scanningState.classList.remove("hidden");
+
+            fetch("/analyze", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "message=" + encodeURIComponent(message)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    btn.disabled = false;
+                    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Analyze Now`;
+
+                    scanningState.classList.add("hidden");
+
+                    let isScam = data.confidence >= 50;
+                    let headerClass = isScam ? 'danger-bg' : 'success-bg';
+                    let iconSvg = isScam
+                        ? `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`
+                        : `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>`;
+
+                    let badgeClass = isScam ? 'danger-badge' : 'success-badge';
+
+                    let triggersHtml = data.triggers.length > 0
+                        ? data.triggers.map((trigger) => `<span class="badge-small ${badgeClass}">${trigger}</span>`).join('')
+                        : `<span class="badge-small ${badgeClass}">None Detected</span>`;
+
+                    let insightHtml = data.learning_cards && data.learning_cards.length > 0
+                        ? `<p style="margin-top: 1.5rem; line-height: 1.6; font-size: 0.95rem;">${data.learning_cards.join(' <br> ')}</p>`
+                        : `<p style="margin-top: 1.5rem; line-height: 1.6; font-size: 0.95rem;">Analysis complete. No immediate specific vulnerabilities flagged.</p>`;
+
+                    resultState.innerHTML = `
+                <div class="result-header ${headerClass}">
+                    ${iconSvg}
+                    <div>
+                        <h3>${isScam ? 'High Risk Detected' : 'Looks Safe'}</h3>
+                        <p>${data.confidence}% Analysis Certainty</p>
+                    </div>
+                </div>
+
+                <div class="result-details">
+                    <div class="detail-item glass-card">
+                        <span class="text-muted">Classification</span>
+                        <strong>${data.label}</strong>
+                    </div>
+                    <div class="detail-item glass-card">
+                        <span class="text-muted">Certainty Level</span>
+                        <strong>${data.confidence}%</strong>
+                    </div>
+                </div>
+
+                <div class="triggers-list glass-card">
+                    <span class="text-muted" style="display: block; margin-bottom: 1rem;">Detected Psychological Triggers:</span>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        ${triggersHtml}
+                    </div>
+                    ${insightHtml}
+                </div>
+            `;
+
+                    resultState.classList.remove("hidden");
+                })
+                .catch(err => {
+                    btn.disabled = false;
+                    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Analyze Now`;
+                    scanningState.classList.add("hidden");
+                    defaultState.classList.remove("hidden");
+                    alert("Analysis failed. Please try again.");
+                });
+        }
+    </script>
+
+</body>
+
+</html>

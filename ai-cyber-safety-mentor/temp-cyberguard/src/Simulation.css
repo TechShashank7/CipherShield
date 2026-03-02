@@ -1,0 +1,177 @@
+/* Simulation specific styles */
+
+.simulation-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+}
+
+.sim-intro {
+    padding: 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.sim-icon {
+    width: 4rem;
+    height: 4rem;
+    color: var(--primary);
+}
+
+.phone-mockup {
+    position: relative;
+    width: 320px;
+    height: 640px;
+    background: #1a1a1a;
+    border: 12px solid #333;
+    border-radius: 40px;
+    margin: 0 auto;
+    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.phone-screen {
+    flex: 1;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+}
+
+.phone-header {
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+}
+
+.phone-notch {
+    width: 120px;
+    height: 25px;
+    background: #333;
+    border-radius: 0 0 15px 15px;
+}
+
+.message-app {
+    padding-top: 1.5rem;
+    flex: 1;
+    background: #050505;
+}
+
+.msg-sender {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    text-align: left;
+}
+
+.avatar-small {
+    width: 32px;
+    height: 32px;
+    background: #0077ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.msg-sender div strong {
+    display: block;
+    font-size: 0.9rem;
+}
+
+.msg-sender div p {
+    font-size: 0.7rem;
+    color: #666;
+}
+
+.msg-content {
+    margin: 2rem 1rem;
+    padding: 1.2rem;
+    text-align: left;
+    border-radius: 1.2rem;
+    font-size: 0.95rem;
+}
+
+.scam-link {
+    display: block;
+    margin-top: 0.8rem;
+    color: #00aaff;
+    text-decoration: underline;
+    overflow-wrap: break-word;
+}
+
+.user-actions-row {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    padding: 0 1rem;
+    gap: 0.8rem;
+}
+
+.btn-action {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-action.secondary {
+    color: #ff4d6d;
+}
+
+.sim-instruction {
+    margin-top: 2rem;
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+.feedback-stats {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+    text-align: left;
+}
+
+.feedback-stats .stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.sim-feedback {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.text-danger {
+    color: #ff4d6d;
+}
+
+.text-success {
+    color: #00f5d4;
+}
+
+.text-warning {
+    color: #ff8a5c;
+}
