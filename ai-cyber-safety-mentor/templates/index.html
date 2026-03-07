@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CyberGuard AI | Next-Gen Cyber Immunity</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+        <nav class="navbar glass-card">
+            <div class="container nav-container">
+                <a href="/" class="logo">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    <span>CyberGuard <span class="gradient-text">AI</span></span>
+                </a>
+
+                <div class="nav-links">
+                    <a href="/" class="active">Home</a>
+                    <a href="/challenge">Phishing Simulation</a>
+                    <a href="/scam-detection">Scam Checker</a>
+                    <a href="/profile" class="btn-outline"
+                        style="padding: 0.4rem 1rem; text-decoration: none;">Profile</a>
+                    <a href="/admin" class="btn-primary" style="padding: 0.4rem 1rem; text-decoration: none;">Admin
+                        Portal</a>
+                </div>
+            </div>
+        </nav>
+
+        <main>
+            <section class="hero fade-in">
+                <div class="container">
+                    <div class="hero-content">
+                        <div class="badge">AI-Powered Cybersecurity Simulation</div>
+                        <h1 class="hero-title">
+                            Build Your <span class="gradient-text">Digital Immunity</span> <br />
+                            Before the Attack Happens.
+                        </h1>
+                        <p class="hero-subtitle">
+                            Most cybersecurity training is passive. CyberGuard AI tests you with real-world simulations,
+                            detects your psychological vulnerabilities, and builds a custom risk profile to keep you
+                            safe.
+                        </p>
+                        <div class="hero-actions">
+                            <a href="/challenge" class="btn-primary">Try Phishing Simulator</a>
+                            <a href="/scam-detection" class="btn-outline">Analyze a Message</a>
+                            <a href="/voice-simulator" class="btn-primary">Voice Scam Simulator (Beta)</a>
+                        </div>
+                    </div>
+
+                    <div class="hero-visual">
+                        <div class="hero-card-stack" id="heroCardStack">
+                            <div class="glass-card hero-card main-card fade-in">
+                                <div class="card-header">
+                                    <svg class="card-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path
+                                            d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z" />
+                                        <path
+                                            d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z" />
+                                    </svg>
+                                    {% if session.last_profile %}
+                                    <span>AI Risk Assessment</span>
+                                    {% else %}
+                                    <span>No Risk Profile Yet</span>
+                                    {% endif %}
+                                </div>
+                                {% if session.last_profile %}
+                                <div class="risk-meter">
+                                    <div class="meter-value" data-score="{{ session.last_profile.score }}"></div>
+                                </div>
+                                <div class="card-stat">
+                                    <h3>Vulnerability Score: {{ session.last_profile.score }}</h3>
+                                    <p>Status: <span
+                                            class="{% if session.last_profile.score >= 85 %}text-success{% elif session.last_profile.score >= 60 %}text-warning{% else %}text-danger{% endif %}">{{
+                                            session.last_profile.verdict }}</span></p>
+                                </div>
+                                <div class="weakness">
+                                    <span>Weakness: </span>
+                                    <span class="badge-small" style="text-transform: capitalize;">{{
+                                        session.last_profile.dominant }}</span>
+                                </div>
+                                <div class="ai-status">
+                                    <span class="pulse-dot"></span>
+                                    AI monitoring active
+                                </div>
+                                {% else %}
+                                <div class="card-stat" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
+                                    <p class="text-muted" style="line-height: 1.5;">Complete a simulation to unlock your
+                                        AI risk assessment.</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="glass-card decoration-card c1"></div>
+                            <div class="glass-card decoration-card c2"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="features">
+                <div class="container">
+                    <h2 class="section-title text-center">Beyond Education: <span class="gradient-text">Behavioral
+                            Testing</span></h2>
+                    <div class="features-grid">
+
+                        <div class="glass-card feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                                </svg>
+                            </div>
+                            <h3>Real-World Simulations</h3>
+                            <p class="text-muted">We send safe, controlled phishing messages to test your reactions in
+                                real-time.</p>
+                        </div>
+
+                        <div class="glass-card feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path
+                                        d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z" />
+                                    <path
+                                        d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z" />
+                                </svg>
+                            </div>
+                            <h3>Psychological Profiling</h3>
+                            <p class="text-muted">Identify if you fall for greed, fear, urgency, or authority-based
+                                triggers.</p>
+                        </div>
+
+                        <div class="glass-card feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 3v18h18" />
+                                    <path d="M18 17V9" />
+                                    <path d="M13 17V5" />
+                                    <path d="M8 17v-3" />
+                                </svg>
+                            </div>
+                            <h3>Dynamic Risk Score</h3>
+                            <p class="text-muted">Get a live digital immunity score that improves as you learn and
+                                resist scams.</p>
+                        </div>
+
+                        <div class="glass-card feature-card">
+                            <div class="feature-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                </svg>
+                            </div>
+                            <h3>Adaptive Training</h3>
+                            <p class="text-muted">The platform gets harder as you improve, ensuring you're always one
+                                step ahead.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2026 CyberGuard AI. Strengthen your digital immunity.</p>
+            </div>
+        </footer>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const meter = document.querySelector(".meter-value");
+
+            if (!meter) return;
+
+            const score = meter.dataset.score;
+
+            meter.style.width = "0%";
+
+            setTimeout(() => {
+                meter.style.width = score + "%";
+            }, 300);
+
+        });
+        const cardStack = document.getElementById("heroCardStack");
+
+        if (cardStack) {
+            cardStack.addEventListener("mousemove", (e) => {
+
+                const rect = cardStack.getBoundingClientRect();
+
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = (y - centerY) / 18;
+                const rotateY = (centerX - x) / 18;
+
+                cardStack.style.transform =
+                    `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            cardStack.addEventListener("mouseleave", () => {
+                cardStack.style.transform =
+                    "perspective(900px) rotateX(0deg) rotateY(0deg)";
+            });
+
+        }
+    </script>
+</body>
+
+</html>

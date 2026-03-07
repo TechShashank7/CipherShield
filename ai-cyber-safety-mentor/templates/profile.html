@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Risk Profile - CyberGuard AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+        <nav class="navbar glass-card">
+            <div class="container nav-container">
+                <a href="/" class="logo">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    <span>CyberGuard <span class="gradient-text">AI</span></span>
+                </a>
+
+                <div class="nav-links">
+                    <a href="/">Home</a>
+                    <a href="/challenge">Simulation</a>
+                    <a href="/scam-detection">Scam Checker</a>
+                    <a href="/profile" class="active btn-outline"
+                        style="padding: 0.4rem 1rem; text-decoration: none;">Profile</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="dashboard-page fade-in">
+            <div class="container">
+
+                <div class="profile-layout">
+                    <!-- Left Sidebar: Profile Details -->
+                    <div class="profile-sidebar">
+                        <div class="glass-card profile-user-card">
+                            <div class="profile-avatar">
+                                <!-- Place holder sleek avatar -->
+                                <img src="{{ url_for('static', filename='gallery/woman-with-long-brown-hair-pink-shirt_90220-2940.avif') }}"
+                                    alt="Profile">
+                            </div>
+                            <!-- Mock user details to mimic a realistic dashboard -->
+                            <div class="profile-user-name">New User</div>
+                            {% if profile and profile.badge %}
+                            <div style="margin-top: 0.8rem; margin-bottom: 0.8rem; text-align: center;">
+                                <span
+                                    style="display: inline-block; background: rgba(0, 245, 212, 0.1); color: var(--primary); border: 1px solid rgba(0, 245, 212, 0.4); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 700; box-shadow: 0 0 15px rgba(0, 245, 212, 0.3); text-transform: uppercase; letter-spacing: 0.5px;">{{
+                                    profile.badge }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="profile-user-role">Cybersecurity Enthusiast</div>
+
+                            <div class="profile-user-details">
+                                <div class="detail-row">
+                                    <span class="detail-label">Status</span>
+                                    <span class="detail-value text-success">Active</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Access Level</span>
+                                    <span class="detail-value">Candidate</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Region</span>
+                                    <span class="detail-value">Global</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mini widget in sidebar -->
+                        <div class="glass-card" style="padding: 1.5rem;">
+                            <h4
+                                style="font-size: 1rem; margin-bottom: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">
+                                Recent Activity</h4>
+                            <div style="font-size: 0.9rem; display: flex; flex-direction: column; gap: 0.8rem;">
+                                {% if profile %}
+                                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                    <span
+                                        style="width: 8px; height: 8px; border-radius: 50%; background: var(--primary);"></span>
+                                    <span style="color: var(--text-main);">Completed Simulator</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                    <span
+                                        style="width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted);"></span>
+                                    <span class="text-muted">Generated Risk Profile</span>
+                                </div>
+                                {% else %}
+                                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                    <span
+                                        style="width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted);"></span>
+                                    <span class="text-muted">Pending simulator attempt</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Area: Dashboard Grid -->
+                    <div class="profile-grid">
+                        {% if profile %}
+                        <!-- Main Score Card -->
+                        <div class="glass-card profile-main profile-card" style="grid-column: 1 / -1;">
+                            <div class="circular-progress"
+                                style="--primary: {% if profile.verdict == 'Cyber Guardian' %}#00f5d4{% elif profile.verdict == 'Aware but Vulnerable' %}#ff8a5c{% else %}#ff4d6d{% endif %}; border-top-color: var(--primary);">
+                                <span class="score-num" style="color: var(--primary);">{{ profile.score }}</span>
+                                <span class="score-label" style="color: var(--text-muted);">Points</span>
+                            </div>
+                            <h3 style="font-size: 1.6rem; margin-top: 1rem;">{{ profile.verdict }}</h3>
+                        </div>
+
+                        <!-- Cyber Immunity Growth -->
+                        <div class="glass-card profile-insight" style="grid-column: 1 / -1;">
+                            <h3 style="text-align: center;">Cyber Immunity Growth</h3>
+                            <div
+                                style="position: relative; width: 100%; max-width: 600px; margin: 0 auto; padding: 1rem; height: 300px;">
+                                <canvas id="immunityGrowthChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Psychological Vulnerability Map -->
+                        <div class="glass-card profile-insight" style="grid-column: 1 / -1;">
+                            <h3 style="text-align: center;">Psychological Vulnerability Map</h3>
+                            <div
+                                style="position: relative; width: 100%; max-width: 450px; margin: 0 auto; padding: 1rem; padding-bottom: 2rem;">
+                                <canvas id="vulnerabilityChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Behavioral Insight Card -->
+                        <div class="glass-card profile-insight" style="grid-column: 1 / -1; text-align: center;">
+                            <!-- Icon can be added here if desired -->
+                            <h3>Behavioral Insight</h3>
+                            <p>
+                                Your vulnerability score is <strong style="color: #fff;">{{ profile.score }}</strong>
+                                and
+                                your current risk status is <strong style="color: #fff;">{{ profile.verdict }}</strong>.
+                            </p>
+                            <p style="margin-top: 1rem;">
+                                {% if profile.score >= 85 %}
+                                Your interactions demonstrate strong situational awareness and resistance to common
+                                manipulation tactics. You reliably verify ambiguous communications and do not easily
+                                fall for emotional payloads.
+                                {% elif profile.score >= 60 %}
+                                Your interactions indicate partial vulnerability. While you successfully avoided
+                                some traps, specific triggers like <strong
+                                    style="color: #fff; text-transform: capitalize;">{{
+                                    profile.dominant }}</strong>
+                                present a measurable risk layer to your decision-making. Consistent verification
+                                habits will build stronger resilience.
+                                {% else %}
+                                Your interaction patterns show high susceptibility to emotional manipulation.
+                                Attackers exploiting <strong style="color: #fff; text-transform: capitalize;">{{
+                                    profile.dominant }}</strong> tactics bypass your logical defenses effectively.
+                                Immediate adoption of strict verification habits and forced delays is highly
+                                recommended.
+                                {% endif %}
+                            </p>
+                        </div>
+
+                        <!-- Action Card -->
+                        <div class="glass-card profile-action-card"
+                            style="grid-column: 1 / -1; border: none; background: transparent; box-shadow: none; display: flex; justify-content: center; padding: 1rem 0 0 0;">
+                            <a href="/challenge" class="btn-primary"
+                                style="font-size: 1.1rem; padding: 1rem 3rem; border-radius: 30px;">Retake Simulator</a>
+                        </div>
+                        {% else %}
+                        <!-- No Data Fallback inside profile-grid -->
+                        <div class="glass-card profile-main profile-card"
+                            style="grid-column: 1 / -1; padding: 4rem 2rem;">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                                style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M16 16s-1.5-2-4-2-4 2-4 2"></path>
+                                <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                                <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                            </svg>
+                            <h3 style="font-size: 1.8rem; margin-bottom: 1rem;">No data available</h3>
+                            <p class="text-muted"
+                                style="font-size: 1.1rem; margin-bottom: 2.5rem; line-height: 1.6; max-width: 500px; text-align: center;">
+                                Please attempt the phishing simulator once to generate your personalized risk profile.
+                            </p>
+                            <a href="/challenge" class="btn-primary" style="font-size: 1rem;">Take the Simulator</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2026 CyberGuard AI. Strengthen your digital immunity.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Chart.js Initialization -->
+    <script>
+        {% if profile %}
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('vulnerabilityChart').getContext('2d');
+
+            // Extract values safely, defaulting to 0 if template variables are missing
+            const dataValues = [
+                Number('{{ profile.breakdown.authority | default(0) if profile.breakdown else 0 }}'),
+                Number('{{ profile.breakdown.urgency | default(0) if profile.breakdown else 0 }}'),
+                Number('{{ profile.breakdown.reward | default(0) if profile.breakdown else 0 }}'),
+                Number('{{ profile.breakdown.fear | default(0) if profile.breakdown else 0 }}'),
+                Number('{{ profile.breakdown.link | default(0) if profile.breakdown else 0 }}')
+            ];
+
+            // Dynamic max for scale
+            const maxVal = Math.max(10, ...dataValues);
+
+            const data = {
+                labels: ['Authority', 'Urgency', 'Reward', 'Fear', 'Suspicious Link'],
+                datasets: [{
+                    label: 'Vulnerability Impact',
+                    data: dataValues,
+                    backgroundColor: 'rgba(0, 229, 194, 0.2)', // Soft Teal Fill
+                    borderColor: '#00E5C2', // Teal Stroke
+                    borderWidth: 2,
+                    pointBackgroundColor: '#00E5C2',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#00E5C2',
+                    pointRadius: 4
+                }]
+            };
+
+            const config = {
+                type: 'radar',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)',
+                                circular: true
+                            },
+                            pointLabels: {
+                                color: '#adb5bd',
+                                font: {
+                                    size: 13,
+                                    family: "'Plus Jakarta Sans', sans-serif"
+                                }
+                            },
+                            ticks: {
+                                display: false, // Hide numeric scale labels
+                                min: 0,
+                                max: maxVal > 0 ? maxVal : 10 // Dynamic bounds
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 15, 20, 0.9)',
+                            titleColor: '#00E5C2',
+                            bodyColor: '#f8f9fa',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function (context) {
+                                    return ' Score: ' + context.raw;
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            new Chart(ctx, config);
+
+            // Cyber Immunity Growth Line Chart
+            const historyData = {{ session.get('score_history', []) | tojson | safe
+        }};
+        if (historyData && historyData.length > 0) {
+            const historyCtx = document.getElementById('immunityGrowthChart').getContext('2d');
+            const labels = historyData.map((_, i) => 'Attempt ' + (i + 1));
+
+            new Chart(historyCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Risk Score',
+                        data: historyData,
+                        borderColor: '#00f5d4',
+                        backgroundColor: 'rgba(0, 245, 212, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#00f5d4',
+                        pointBorderColor: '#fff',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#adb5bd' },
+                            title: { display: true, text: 'score_history values', color: '#adb5bd' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#adb5bd' },
+                            title: { display: true, text: 'Simulation attempt number', color: '#adb5bd' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+        });
+        {% endif %}
+    </script>
+</body>
+
+</html>

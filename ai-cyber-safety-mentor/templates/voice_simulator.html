@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Voice Scam Simulator - CyberGuard AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .coming-soon-badge {
+            display: inline-block;
+            background: rgba(0, 245, 212, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(0, 245, 212, 0.4);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(0, 245, 212, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 1rem;
+        }
+
+        .planned-list {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .planned-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .planned-list li::before {
+            content: "•";
+            color: var(--primary);
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -0.2rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-wrapper">
+        <nav class="navbar glass-card">
+            <div class="container nav-container">
+                <a href="/" class="logo">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    <span>CyberGuard <span class="gradient-text">AI</span></span>
+                </a>
+
+                <div class="nav-links">
+                    <a href="/">Home</a>
+                    <a href="/challenge">Simulation</a>
+                    <a href="/scam-detection">Scam Checker</a>
+                    <a href="/profile" class="btn-outline"
+                        style="padding: 0.4rem 1rem; text-decoration: none;">Profile</a>
+                    <a href="/admin" class="btn-primary" style="padding: 0.4rem 1rem; text-decoration: none;">Admin
+                        Portal</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="dashboard-page fade-in">
+            <div class="container" style="max-width: 800px; margin: 0 auto; text-align: center;">
+                <div style="margin-bottom: 3rem; margin-top: 2rem;">
+                    <h2 class="section-title" style="margin-bottom: 0.5rem;">Voice Scam <span
+                            class="gradient-text">Simulator</span></h2>
+                    <p class="text-muted" style="font-size: 1.1rem;">AI-Powered Voice Phishing Training (Coming Soon)
+                    </p>
+                </div>
+
+                <div class="glass-card" style="padding: 3rem 2rem; margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                            style="color: var(--primary);">
+                            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                            <line x1="12" y1="19" x2="12" y2="22"></line>
+                        </svg>
+                    </div>
+                    <h3 style="font-size: 1.6rem; margin-bottom: 1rem; color: #fff;">Future Feature Preview</h3>
+                    <div
+                        style="text-align: left; margin: 0 auto; max-width: 600px; color: var(--text-muted); line-height: 1.7; font-size: 1.05rem;">
+                        <p style="margin-bottom: 1rem;">CyberGuard AI will soon include a Voice Scam Simulator designed
+                            to train users against voice-based social engineering attacks.</p>
+                        <p style="margin-bottom: 1rem;">This module will simulate real-world scam phone calls such as:
+                        </p>
+                        <ul class="planned-list" style="margin-bottom: 1.5rem;">
+                            <li>Bank impersonation calls</li>
+                            <li>OTP fraud calls</li>
+                            <li>Courier delivery scams</li>
+                            <li>KYC verification scams</li>
+                            <li>Government impersonation scams</li>
+                        </ul>
+                        <p>Users will interact with simulated calls and choose actions such as verifying the caller,
+                            disconnecting, or sharing information. The system will then analyze behavioral responses and
+                            update the user's risk profile.</p>
+                    </div>
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <span class="coming-soon-badge">Coming Soon</span>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="padding: 2.5rem 2rem; text-align: left; margin-bottom: 3rem;">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 1rem; color: #fff; text-align: center;">Planned
+                        Capabilities</h3>
+                    <div style="max-width: 500px; margin: 0 auto;">
+                        <ul class="planned-list">
+                            <li>AI-generated scam voice calls</li>
+                            <li>Interactive phone call simulator</li>
+                            <li>Behavioral decision tracking</li>
+                            <li>Voice phishing detection training</li>
+                            <li>Risk profile updates based on call responses</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 4rem;">
+                    <a href="/" class="btn-outline"
+                        style="padding: 0.8rem 2rem; font-size: 1.1rem; border-radius: 30px;">
+                        Return to Home
+                    </a>
+                </div>
+
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2026 CyberGuard AI. Strengthen your digital immunity.</p>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>

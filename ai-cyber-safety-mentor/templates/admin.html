@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CyberGuard AI | Security Operations Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .admin-page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 2rem;
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .admin-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .admin-header p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            opacity: 0.8;
+        }
+
+        .admin-analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .admin-analytics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .admin-analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-card {
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .stat-card h4 {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .admin-panels-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            align-items: stretch;
+        }
+
+        @media (max-width: 900px) {
+            .admin-panels-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-card {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        .intel-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .intel-list li {
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .intel-list li:last-child {
+            border-bottom: none;
+        }
+
+        .intel-list li::before {
+            content: "•";
+            color: var(--primary);
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .status-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .status-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        .status-list li:last-child {
+            border-bottom: none;
+        }
+
+        .status-value {
+            color: #00E5C2;
+            font-weight: 600;
+        }
+
+        .profile-stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1.25rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 1.05rem;
+            align-items: center;
+        }
+
+        .profile-stat-label {
+            color: var(--text-muted);
+        }
+
+        .profile-stat-value {
+            font-weight: 700;
+            color: var(--text-main);
+            text-transform: capitalize;
+            font-size: 1.25rem;
+        }
+
+        .profile-stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .glass-chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-wrapper">
+        <nav class="navbar glass-card">
+            <div class="container nav-container">
+                <a href="/" class="logo">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                    <span>CyberGuard <span class="gradient-text">AI</span></span>
+                </a>
+
+                <div class="nav-links">
+                    <a href="/">Home</a>
+                    <a href="/challenge">Simulation</a>
+                    <a href="/scam-detection">Scam Checker</a>
+                    <a href="/profile" class="btn-outline"
+                        style="padding: 0.4rem 1rem; text-decoration: none;">Profile</a>
+                    <a href="/admin" class="active btn-primary"
+                        style="padding: 0.4rem 1rem; text-decoration: none;">Admin Portal</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="dashboard-page fade-in">
+            <div class="container admin-page">
+                <div class="admin-header">
+                    <h1><span class="gradient-text">CyberGuard AI</span> &mdash; Security Operations Dashboard</h1>
+                    <p>Organizational Threat Awareness and Behavioral Risk Monitoring</p>
+                    <div
+                        style="margin-top: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">Last updated: {{ current_time
+                            }}</span>
+                        <button onclick="refreshDashboard()" class="btn-outline"
+                            style="padding: 0.4rem 1rem; font-size: 0.85rem; border-color: var(--primary); color: var(--primary);">Refresh
+                            Analytics</button>
+                    </div>
+                </div>
+
+                <div class="admin-analytics-grid">
+                    <div class="glass-card stat-card">
+                        <h4>Total Users</h4>
+                        <div class="stat-value">{{ analytics.total_users }}</div>
+                    </div>
+                    <div class="glass-card stat-card">
+                        <h4>Simulations Completed</h4>
+                        <div class="stat-value">{{ analytics.simulations_completed }}</div>
+                    </div>
+                    <div class="glass-card stat-card">
+                        <h4>High Risk Profiles</h4>
+                        <div class="stat-value" style="color: #ff4d6d;">{{ analytics.high_risk_users }}</div>
+                    </div>
+                    <div class="glass-card stat-card">
+                        <h4>Average Cyber Immunity Score</h4>
+                        <div class="stat-value" style="color: #00E5C2;">{{ analytics.average_score }}</div>
+                    </div>
+                    <div class="glass-card stat-card" style="padding: 1.5rem;">
+                        <h4>Live Threat Activity</h4>
+                        <div
+                            style="font-size: 0.95rem; color: var(--text-muted); margin-top: 10px; line-height: 1.5; text-transform: none; letter-spacing: normal;">
+                            Messages analyzed today: <strong style="color: var(--text-main);">{{
+                                session.get("messages_checked", 0) }}</strong><br>
+                            Threats detected: <strong style="color: #ff4d6d;">{{ session.get("threats_detected", 0)
+                                }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-panels-grid">
+                    <!-- Threat Distribution Chart -->
+                    <div class="glass-card panel-card">
+                        <h3>Organizational Vulnerability Map</h3>
+                        <div class="glass-chart-container">
+                            <canvas id="orgVulnerabilityChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Latest Risk Profile Panel -->
+                    <div class="glass-card panel-card">
+                        <h3>Latest Risk Profile</h3>
+
+                        <div class="profile-stat-row">
+                            <span class="profile-stat-label">Risk Score</span>
+                            <span class="profile-stat-value" style="color: var(--primary); font-size: 1.5rem;">{{
+                                profile.score }}</span>
+                        </div>
+                        <div class="profile-stat-row">
+                            <span class="profile-stat-label">Risk Status</span>
+                            <span
+                                class="profile-stat-value {% if profile.score >= 85 %}text-success{% elif profile.score >= 60 %}text-warning{% else %}text-danger{% endif %}">
+                                {{ profile.verdict }}
+                            </span>
+                        </div>
+                        <div class="profile-stat-row">
+                            <span class="profile-stat-label">Dominant Vulnerability</span>
+                            <span class="profile-stat-value" style="color: #ff4d6d;">
+                                {{ profile.dominant }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Attack Surface Distribution Bar Chart -->
+                    <div class="glass-card panel-card" style="grid-column: 1 / -1;">
+                        <h3>Attack Surface Distribution</h3>
+                        <div class="glass-chart-container" style="max-width: 100%; height: 350px;">
+                            <canvas id="attackSurfaceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Threat Intelligence Panel -->
+                    <div class="glass-card panel-card">
+                        <h3>AI Threat Intelligence Feed</h3>
+                        <ul class="intel-list">
+                            <li>Increasing phishing attempts exploiting urgency tactics</li>
+                            <li>Authority impersonation scams targeting banking customers</li>
+                            <li>Reward-based scams trending in financial phishing campaigns</li>
+                        </ul>
+                    </div>
+
+                    <!-- System Status Panel -->
+                    <div class="glass-card panel-card">
+                        <h3>System Monitoring Status</h3>
+                        <ul class="status-list">
+                            <li>
+                                <span>AI Scam Detection Engine</span>
+                                <span class="status-value">ACTIVE</span>
+                            </li>
+                            <li>
+                                <span>Behavioral Simulation Engine</span>
+                                <span class="status-value">ACTIVE</span>
+                            </li>
+                            <li>
+                                <span>Threat Monitoring</span>
+                                <span class="status-value">RUNNING</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <p>CyberGuard AI &mdash; Organizational Cyber Awareness Monitoring Console</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Chart.js Initialization -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('orgVulnerabilityChart').getContext('2d');
+
+            // Extract values safely, defaulting to 0 if template variables are missing
+            const dataValues = [
+                Number('{{ profile.breakdown.authority | default(0) if profile.breakdown else 0 }}'),
+                Number('{{ profile.breakdown.urgency | default(0) if profile.breakdown else 0 }}'),
+                Number('{{ profile.breakdown.reward | default(0) if profile.breakdown else 0 }}'),
+                Number('{{ profile.breakdown.fear | default(0) if profile.breakdown else 0 }}'),
+                Number('{{ profile.breakdown.link | default(0) if profile.breakdown else 0 }}')
+            ];
+
+            // Dynamic max for scale
+            const maxVal = Math.max(10, ...dataValues);
+
+            const data = {
+                labels: ['Authority', 'Urgency', 'Reward', 'Fear', 'Suspicious Link'],
+                datasets: [{
+                    label: 'Organizational Impact',
+                    data: dataValues,
+                    backgroundColor: 'rgba(0, 229, 194, 0.2)', // Soft Teal Fill
+                    borderColor: '#00E5C2', // Teal Stroke
+                    borderWidth: 2,
+                    pointBackgroundColor: '#00E5C2',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#00E5C2',
+                    pointRadius: 4
+                }]
+            };
+
+            const config = {
+                type: 'radar',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)',
+                                circular: true
+                            },
+                            pointLabels: {
+                                color: '#adb5bd',
+                                font: {
+                                    size: 13,
+                                    family: "'Plus Jakarta Sans', sans-serif"
+                                }
+                            },
+                            ticks: {
+                                display: false, // Hide numeric scale labels
+                                min: 0,
+                                max: maxVal > 0 ? maxVal : 10 // Dynamic bounds
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 15, 20, 0.9)',
+                            titleColor: '#00E5C2',
+                            bodyColor: '#f8f9fa',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function (context) {
+                                    return ' Score: ' + context.raw;
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            new Chart(ctx, config);
+
+            // Attack Surface Bar Chart
+            const attackCtx = document.getElementById('attackSurfaceChart').getContext('2d');
+
+            const barGradient = attackCtx.createLinearGradient(0, 0, 0, 400);
+            barGradient.addColorStop(0, '#00E5C2');
+            barGradient.addColorStop(1, 'rgba(0, 229, 194, 0.2)');
+
+            new Chart(attackCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Authority', 'Urgency', 'Reward', 'Fear', 'Suspicious Link'],
+                    datasets: [{
+                        label: 'Attack Surface',
+                        data: dataValues,
+                        backgroundColor: barGradient,
+                        borderColor: '#00E5C2',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        hoverBackgroundColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)'
+                            },
+                            ticks: {
+                                color: '#adb5bd'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#adb5bd'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        });
+
+        function refreshDashboard() {
+            location.reload();
+        }
+    </script>
+</body>
+
+</html>
