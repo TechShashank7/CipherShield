@@ -112,20 +112,22 @@ The platform consists of four major layers:
 🛠 Tech Stack
 
 1. Frontend
-    i. MERN Stack
+    i. HTML
+    ii. CSS
+    iii. JS
 
-2. Backend
+3. Backend
     i. Python
     ii. Flask / FastAPI
     iii. REST APIs
     iv. Session management
 
-3. AI & Machine Learning
+4. AI & Machine Learning
     i. Scikit-learn
     ii. NLP analysis
     iii. Behavioral scoring models
 
-4. Deployment
+5. Deployment
     i. GitHub
     ii. Render
 
